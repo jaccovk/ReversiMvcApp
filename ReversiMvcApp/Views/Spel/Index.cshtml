@@ -1,0 +1,44 @@
+﻿@model IEnumerable<ReversiMvcApp.Models.Spel>
+
+
+
+<h1>Spel Overzicht</h1>
+
+
+<h4>Choose wisely....</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Omschrijving)
+            </th>
+            <th />
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Omschrijving)
+                </td>
+                <td>
+                    <form asp-action="Details">
+                        <button class="btn btn-primary">Aanvallen!!</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<p>
+    <form asp-action="Create">
+        <button class="btn btn-primary">Start Nieuw Spel</button>
+    </form>
+</p>

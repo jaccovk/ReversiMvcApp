@@ -1,0 +1,17 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using System.Net
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welkom  @User.Identity.Name!</h1>
+    <form asp-controller="Spel" asp-action="Index">
+        <button class="btn btn-primary">Zoek voor Spellen</button>
+    </form>
+</div>
+
+<div>
+    Overzicht van jouw Reversi skills:
+    [...]
+</div>

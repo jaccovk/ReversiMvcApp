@@ -1,0 +1,64 @@
+﻿@model ReversiMvcApp.Models.Spel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Dat de beste moge winnen...</h2>
+
+<div>
+
+    @*<p style="text-align:left;">
+        <span style="float: left">
+             Speler [...]: Kleur Wit
+        </span>
+        <span>
+            @Html.DisplayNameFor(model => model.Omschrijving)
+        </span>
+        <span style="float:right;">
+            Speler [...]: Kleur Zwart
+        </span>
+    </p>*@
+    @*<dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Speler1Token)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Speler1Token)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Speler2Token)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Speler2Token)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Omschrijving)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Omschrijving)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Winnaar)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Winnaar)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Afgelopen)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Afgelopen)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.AandeBeurt)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.AandeBeurt)
+        </dd>
+    </dl>*@
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
