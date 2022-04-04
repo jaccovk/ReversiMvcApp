@@ -1,9 +1,18 @@
-﻿@model IEnumerable<ReversiMvcApp.Models.Spel>
+﻿@using System.Security.Claims
+@model IEnumerable<ReversiMvcApp.Models.Spel>
 
 
 
 <h1>Spel Overzicht</h1>
 
+@if (ViewBag.Message != null)
+{
+    <script type="text/javascript">
+        window.onload = function () {
+            alert("@ViewBag.Message");
+        };
+    </script>
+}
 
 <h4>Choose wisely....</h4>
 <table class="table">
@@ -29,9 +38,12 @@
                     @Html.DisplayFor(modelItem => item.Omschrijving)
                 </td>
                 <td>
-                    <form asp-action="Details">
-                        <button class="btn btn-primary">Aanvallen!!</button>
-                    </form>
+                    @if (item.Speler1Token != User.FindFirst(ClaimTypes.NameIdentifier)?.Value)
+                    {
+                        <form asp-action="Details" asp-route-id="@item.Token">
+                            <button class="btn btn-primary">Aanvallen!!</button>
+                        </form>
+                    }
                 </td>
             </tr>
         }

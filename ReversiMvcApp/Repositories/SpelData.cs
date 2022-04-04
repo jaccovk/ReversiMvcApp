@@ -30,12 +30,12 @@ namespace ReversiMvcApp.Repositories
         {
             try
             {
-                HttpResponseMessage response = await _client.GetAsync($"{Url}/getSpellen");//Url}");
+                HttpResponseMessage response = await _client.GetAsync($"{Url}/getSpellen");
                 response.EnsureSuccessStatusCode();
                 string responseBody = await response.Content.ReadAsStringAsync();
                 Debug.WriteLine(responseBody);
                 return JsonConvert.DeserializeObject<List<Spel>>(responseBody);
-                
+
 
             }
             catch (HttpRequestException e)
@@ -46,24 +46,53 @@ namespace ReversiMvcApp.Repositories
             }
         }
 
-        public async Task AddSpel(Spel spel)
+        public async Task<string> AddSpel(Spel spel)
         {
+            //check of de speler een spel open heeft staan.
+            if (await SecurityCheck.OnlyOneGameOpen(spel.Speler1Token, _client, Url) == false)
+            {
+                return "onlyOneGame";
+            }
+
             //Voeg de encrypte spelertoken toe aan de FromHeader van de api d.m.v. HttpClient
             _client.DefaultRequestHeaders.Add("x-spelertoken", spel.Speler1Token);
+
+            //controle of er een omschrijving ingevuld is(in principe vangt het html script dit op, maar soms gaat het fout. dit is een extra controle
+            if (spel.Omschrijving == null) return "noOmschrijving";
 
             //encodeer de omschrijving en zet deze om in een StringContent. wordt gebruikt door HttpClient ipv string 
             var content = new StringContent($"\"{spel.Omschrijving}\"", Encoding.UTF8, "application/json");
 
             //maak een nieuw response message aan en wacht tot de httpClient de post request heeft uitgevoerd en een OK message heeft teruggekregen.
-            HttpResponseMessage response = await _client.PostAsync($"{Url}/createGame",content);
-
+            HttpResponseMessage response = await _client.PostAsync($"{Url}/createGame", content);
+            
             //controleer of de client een success heeft gereturnd. 
-            response.EnsureSuccessStatusCode();
+            if (response.IsSuccessStatusCode) return "ok";
+            return "somethingWrong";
         }
 
-        public async Task<Spel> GetSpelDetails(int? id)
+        public async Task<Spel> GetSpelDetails(string? id, ClaimsPrincipal user)
         {
-            HttpResponseMessage response = await _client.GetAsync($"{Url}/{id}");
+            //verstuur de encrypte spelertoken naar de header 
+            _client.DefaultRequestHeaders.Add("x-speltoken", id);
+
+            //vraag het spel op d.m.v. het opgegeven speltoken en controleer of deze niet null is
+            HttpResponseMessage response = await _client.GetAsync($"{Url}/getSpel");
+            if (!response.IsSuccessStatusCode) return null;
+
+            //zet de gereturnde json object om in Spel en wacht op response. wanneer spel null is, return null.
+            Spel spel = JsonConvert.DeserializeObject<Spel>(
+                await response.Content.ReadAsStringAsync());
+
+            if (spel == null) return null;
+
+            //vraag de user id op en encrypt deze. return vervolgens spel
+            string currentUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (spel.Speler1Token == currentUserId) return null;
+            spel.Speler2Token = currentUserId;
+            return spel;
         }
+
+
     }
 }

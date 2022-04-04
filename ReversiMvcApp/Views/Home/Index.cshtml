@@ -1,5 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using System.Net
+@model IEnumerable<ReversiMvcApp.Models.Speler>
+
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -10,8 +12,14 @@
         <button class="btn btn-primary">Zoek voor Spellen</button>
     </form>
 </div>
-
-<div>
-    Overzicht van jouw Reversi skills:
-    [...]
-</div>
+@if (User.Identity.Name != null)
+{
+    <div class="row">
+        <div class="col-md-10">
+            <h2>Overzicht van jouw Reversi skills:</h2>
+            <p>[0] Reversi Gewonnen @*@Html.DisplayFor(item => item.Select(i => i.AantalGewonnen))] Reversi Gewonnen*@</p>
+            <p>[0] Reversi Gelijkspel @*@Html.DisplayFor(item => item.Select(i => i.AantalGelijk)))] Reversi Gelijkspel*@</p>
+            <p>[0] Reversi Verloren @*@Html.DisplayNameFor(item => item.Select(i => i.AantalVerloren)))] Reversi Verloren*@</p>
+        </div>
+    </div>
+}

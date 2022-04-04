@@ -6,19 +6,21 @@
 
 <h2>Dat de beste moge winnen...</h2>
 
-<div>
-
-    @*<p style="text-align:left;">
-        <span style="float: left">
-             Speler [...]: Kleur Wit
-        </span>
-        <span>
-            @Html.DisplayNameFor(model => model.Omschrijving)
-        </span>
-        <span style="float:right;">
-            Speler [...]: Kleur Zwart
-        </span>
-    </p>*@
+    <div>
+    <p>
+    @if (Html.DisplayFor(name => name.Token).ToString() == Html.DisplayFor(name => name.Speler1Token).ToString())
+    {
+        <div style="float: left">
+            Speler @User.Identity.Name: Kleur Wit
+        </div>
+    }
+    else
+    {
+        <div style="float: right;">
+            Speler @User.Identity.Name: Kleur Zwart
+        </div>
+    }
+    </p>
     @*<dl class="row">
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Speler1Token)
@@ -58,7 +60,6 @@
         </dd>
     </dl>*@
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+<p>
     <a asp-action="Index">Back to List</a>
-</div>
+</p>
