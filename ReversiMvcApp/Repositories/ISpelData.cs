@@ -14,6 +14,10 @@ namespace ReversiMvcApp.Repositories
         public Task<List<Spel>> GetSpellen();
         public Task<string> AddSpel(Spel spel);
         public Task<Spel> GetSpelDetails(string? id, ClaimsPrincipal user);
+        public Task<Spel> GetSpelBySpelerId(string spelerId);
+
+
+        public Task<Spel> NeemDeelAanSpel(string token, string currPlayerToken);
 
     }
 }

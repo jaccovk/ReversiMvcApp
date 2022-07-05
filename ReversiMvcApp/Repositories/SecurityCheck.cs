@@ -22,7 +22,7 @@ namespace ReversiMvcApp.Repositories
         {
             //lijst met spellen opvragen
             HttpResponseMessage response = await client.GetAsync($"{url}/getSpellen");
-            List<Spel> spellen = JsonConvert.DeserializeObject<List<Spel>>(await response.Content.ReadAsStringAsync()).ToList();
+            List<Spel> spellen = JsonConvert.DeserializeObject<List<Spel>>(await response.Content.ReadAsStringAsync())?.ToList();
             if (response.IsSuccessStatusCode)
             {
                 foreach (Spel spel in spellen)

@@ -1,0 +1,34 @@
+﻿@using Newtonsoft.Json
+@model ReversiMvcApp.Models.Spel
+
+@{
+    ViewData["Title"] = $"Spel tegen {User.Identity.Name}";
+
+    string spelToken = (string)ViewData["spelId"];
+    string spelerToken = (string)ViewData["spelerId"];
+}
+
+
+<body>
+    <script src="~/js/app.js"></script>
+
+    <div id="spelerKleur" class="player-color-text">
+    </div>
+    <div id="beurt" class="player-turn-text">
+    </div>
+
+    <div class="row">
+        <div class="col" id="buttons"></div>
+        <div class="col">
+            <div class="game-board"></div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            Game.init("@spelToken", "@spelerToken");
+        });
+    </script>
+
+</body>
+

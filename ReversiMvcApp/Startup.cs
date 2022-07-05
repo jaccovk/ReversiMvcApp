@@ -9,12 +9,15 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ReversiMvcApp.Data;
 using System;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.SignalR;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using ReversiMvcApp.Controllers;
 using ReversiMvcApp.Repositories;
+using ReversiMvcApp.Hubs;
 
 namespace ReversiMvcApp
 {
@@ -38,6 +41,10 @@ namespace ReversiMvcApp
                 .AddEntityFrameworkStores<ReversiDbContext>();
             services.AddControllersWithViews();
             services.AddScoped<ISpelData, SpelData>();
+
+            services.AddSignalR();
+
+
 
         }
 

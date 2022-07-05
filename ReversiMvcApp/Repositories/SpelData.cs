@@ -25,7 +25,6 @@ namespace ReversiMvcApp.Repositories
         readonly ReversiDbContext _context;
         private readonly HttpClient _client = new();
         private string Url => "https://localhost:44326/api/Spel";
-
         public async Task<List<Spel>> GetSpellen()
         {
             try
@@ -46,8 +45,29 @@ namespace ReversiMvcApp.Repositories
             }
         }
 
+        public async Task<Spel> NeemDeelAanSpel(string token, string currPlayerToken)
+        {
+            var neemDeel = new
+            {
+                SpelToken = token,
+                SpelerToken = currPlayerToken
+            };
+            StringContent stringContent = new StringContent(JsonConvert.SerializeObject(neemDeel), Encoding.UTF8, "application/json");
+            HttpResponseMessage response = await _client.PostAsync($"{Url}/neemDeelAanSpel", stringContent);
+            string responseBody = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<Spel>(responseBody);
+        }
+        public async Task<Spel> GetSpelBySpelerId(string spelerId)
+        {
+            HttpResponseMessage response = await _client.GetAsync($"{Url}/getSpelBySpelerId/{spelerId}");
+            string responseBody = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine($"response: responseBody");
+            return JsonConvert.DeserializeObject<Spel>(responseBody);
+        }
+
         public async Task<string> AddSpel(Spel spel)
         {
+
             //check of de speler een spel open heeft staan.
             if (await SecurityCheck.OnlyOneGameOpen(spel.Speler1Token, _client, Url) == false)
             {

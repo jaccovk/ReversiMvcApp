@@ -1,7 +1,7 @@
 ﻿@using System.Security.Claims
 @model IEnumerable<ReversiMvcApp.Models.Spel>
 
-
+   
 
 <h1>Spel Overzicht</h1>
 
@@ -13,8 +13,9 @@
         };
     </script>
 }
-
+@if(Model != null){
 <h4>Choose wisely....</h4>
+}
 <table class="table">
     <thead>
         <tr>
@@ -28,24 +29,29 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Id)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Omschrijving)
-                </td>
-                <td>
-                    @if (item.Speler1Token != User.FindFirst(ClaimTypes.NameIdentifier)?.Value)
-                    {
-                        <form asp-action="Details" asp-route-id="@item.Token">
-                            <button class="btn btn-primary">Aanvallen!!</button>
-                        </form>
-                    }
-                </td>
-            </tr>
+        @if (Model != null) {
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Omschrijving)
+                    </td>
+                    <td>
+                        @if (item.Speler1Token != User.FindFirst(ClaimTypes.NameIdentifier)?.Value)
+                        {
+                            <form asp-action="NeemDeelAanSpel" asp-controller="Spel" asp-route-token="@item.Token">
+                                <button class="btn btn-primary">Aanvallen!!</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        else {
+            <i>Er zijn geen spellen gevonden. Creëer nu een spel!!</i>
         }
     </tbody>
 </table>

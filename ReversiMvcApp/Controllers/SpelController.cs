@@ -1,21 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.Eventing.Reader;
+﻿using System.Diagnostics;
 using System.Linq;
-using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity.UI.V4.Pages.Internal.Account;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
-using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
-using Newtonsoft.Json.Serialization;
 using ReversiMvcApp.Data;
 using ReversiMvcApp.Models;
 using ReversiMvcApp.Repositories;
@@ -25,38 +14,57 @@ namespace ReversiMvcApp.Controllers
     public class SpelController : Controller
     {
         private readonly ReversiDbContext _context;
-        private ISpelData Data;
+        private ISpelData _spelData;
 
         public SpelController(ReversiDbContext context, ISpelData data)
         {
             _context = context;
-            Data = data;
+            _spelData = data;
         }
+
 
         // GET: Spel
+        [Authorize]
         public async Task<IActionResult> Index()
         {
-            if (await Data.GetSpellen() != null)
-                return View(await Data.GetSpellen()); 
-            return BadRequest();
+            if (await _spelData.GetSpellen() != null)
+                return View(await _spelData.GetSpellen());
+            return View();
         }
 
-        // GET: Spel/Details/5
+        // GET: Spel/SpelBord/5
         [Authorize]
-        public async Task<IActionResult> Details(string? id)
+        public async Task<IActionResult> SpelBord()
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-            var spel = await Data.GetSpelDetails(id, User);
+            ClaimsPrincipal currUser = this.User;
+            var currentPlayerToken = currUser.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            var spel = await _spelData.GetSpelBySpelerId(currentPlayerToken);
+
+            ViewData["spelerId"] = currentPlayerToken;
+            ViewData["spelId"] = _spelData.GetSpelBySpelerId(currentPlayerToken).Result.Token;
+
             if (spel == null)
             {
                 ViewBag.Message = "Er is iets fout gegaan. Probeer het opnieuw. \n (Je kunt niet je eigen spel joinen.)";
                 return RedirectToAction("Index");
             }
+
+            
             return View(spel);
         }
+
+        //PUT:spel/
+        public async Task<IActionResult> NeemDeelAanSpel(string token)
+        {
+            ClaimsPrincipal currPlayer = this.User;
+            var currPlayerToken = currPlayer.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            await _spelData.NeemDeelAanSpel(token, currPlayerToken);
+
+            return RedirectToAction("SpelBord", "Spel");
+        }
+
 
 
         // GET: Spel/Create
@@ -82,10 +90,12 @@ namespace ReversiMvcApp.Controllers
                     spel.Speler1Token = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
                     //voeg het nieuwe spel toe en wacht op reactie
-                    string check = await Data.AddSpel(spel);
+                    string check = await _spelData.AddSpel(spel);
+
+
                     if (check == "ok")
-                        return RedirectToAction("Details");
-                    if(check == "noOmschrijving")
+                        return RedirectToAction("SpelBord");
+                    if (check == "noOmschrijving")
                         ViewBag.Message = "Vul een onderwerp in";
                     if (check == "onlyOneGame")
                         ViewBag.Message = "Je kunt maar één game tegelijk starten!";
