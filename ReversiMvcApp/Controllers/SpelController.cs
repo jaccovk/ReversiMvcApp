@@ -23,6 +23,53 @@ namespace ReversiMvcApp.Controllers
         }
 
 
+        //give up
+        public async Task<IActionResult> GeefOp(string spelerToken)
+        {
+            Spel spel = await _spelData.GetSpelBySpelerId(spelerToken);
+            string speler2 = spel.Speler1Token != spelerToken ? spel.Speler1Token : spel.Speler2Token;
+            
+            //check if speler has played more games
+            if (await _context?.Spelers?.FirstOrDefaultAsync(s => s.Guid == spelerToken) == null)
+            {
+                Speler speler = new Speler
+                {
+                    Guid = spelerToken,
+                    Naam = this.User.Identity.Name,
+                    AantalVerloren = 1
+                };
+
+                _context.Spelers.Add(speler);
+            }
+            else
+            {
+                Speler speler = await _context?.Spelers?.FirstOrDefaultAsync(s => s.Guid == spelerToken);
+                speler.AantalVerloren++;
+                _context.Spelers.Update(speler);
+            }
+            if (await _context?.Spelers?.FirstOrDefaultAsync(s => s.Guid == speler2) == null)
+            {
+                Speler speler = new Speler
+                {
+                    Guid = spelerToken,
+                    Naam = "TestUser",
+                    AantalGewonnen = 1
+                };
+
+                _context.Spelers.Add(speler);
+            } 
+            else
+            {
+                Speler speler = await _context?.Spelers?.FirstOrDefaultAsync(s => s.Guid == speler2);
+                speler.AantalGewonnen++;
+                _context.Spelers.Update(speler);
+            }
+/*            _context.Spel.Remove(spel); //remove spel in mvc db
+            _context.SaveChanges();*/
+            _spelData.GeefOp(spel.Token); //remove spel in api db
+            return RedirectToAction("Index", "Home");
+        }
+
         // GET: Spel
         [Authorize]
         public async Task<IActionResult> Index()
@@ -39,19 +86,23 @@ namespace ReversiMvcApp.Controllers
             ClaimsPrincipal currUser = this.User;
             var currentPlayerToken = currUser.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-            var spel = await _spelData.GetSpelBySpelerId(currentPlayerToken);
-
-            ViewData["spelerId"] = currentPlayerToken;
-            ViewData["spelId"] = _spelData.GetSpelBySpelerId(currentPlayerToken).Result.Token;
-
-            if (spel == null)
+            if (await _spelData.GetSpelBySpelerId(currentPlayerToken) != null)
             {
-                ViewBag.Message = "Er is iets fout gegaan. Probeer het opnieuw. \n (Je kunt niet je eigen spel joinen.)";
-                return RedirectToAction("Index");
-            }
+                var spel = await _spelData.GetSpelBySpelerId(currentPlayerToken);
 
-            
-            return View(spel);
+                ViewData["spelerId"] = currentPlayerToken;
+                ViewData["spelId"] = _spelData.GetSpelBySpelerId(currentPlayerToken).Result.Token;
+
+                if (spel == null)
+                {
+                    ViewBag.Message = "Er is iets fout gegaan. Probeer het opnieuw. \n (Je kunt niet je eigen spel joinen.)";
+                    return RedirectToAction("Index");
+                }
+
+
+                return View(spel);
+            }
+            return RedirectToAction("Index", "Spel");
         }
 
         //PUT:spel/
@@ -94,7 +145,9 @@ namespace ReversiMvcApp.Controllers
 
 
                     if (check == "ok")
+                    {
                         return RedirectToAction("SpelBord");
+                    }
                     if (check == "noOmschrijving")
                         ViewBag.Message = "Vul een onderwerp in";
                     if (check == "onlyOneGame")
@@ -108,91 +161,6 @@ namespace ReversiMvcApp.Controllers
 
             }
             return View();
-        }
-
-        // GET: Spel/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var spel = await _context.Spel.FindAsync(id);
-            if (spel == null)
-            {
-                return NotFound();
-            }
-            return View(spel);
-        }
-
-        // POST: Spel/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Token,Speler1Token,Speler2Token,Omschrijving,Winnaar,Afgelopen,AandeBeurt")] Spel spel)
-        {
-            if (id != spel.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(spel);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!SpelExists(spel.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(spel);
-        }
-
-        // GET: Spel/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var spel = await _context.Spel
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (spel == null)
-            {
-                return NotFound();
-            }
-
-            return View(spel);
-        }
-
-        // POST: Spel/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var spel = await _context.Spel.FindAsync(id);
-            _context.Spel.Remove(spel);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool SpelExists(int id)
-        {
-            return _context.Spel.Any(e => e.Id == id);
         }
     }
 }

@@ -16,6 +16,6 @@ namespace ReversiMvcApp.Data
 
         public DbSet<Speler> Spelers { get; set; }
 
-        public DbSet<ReversiMvcApp.Models.Spel> Spel { get; set; }
+        public DbSet<Spel> Spel { get; set; }
     }
 }

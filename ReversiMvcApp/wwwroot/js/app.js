@@ -259,6 +259,17 @@ Game.Reversi = (function(){
             }
             setSpel();
         });
+        isAfgelopen();
+    }
+
+    const isAfgelopen = function () {
+        Game.Api.get(`isAfgelopen`, configMap.spelToken).then(json => {
+            if (json === true) {
+                alert(`${json} heeft gewonnen!`);
+                window.location.replace("https://localhost:5001/");
+            }
+        }
+        );
     }
 
     return {
@@ -395,17 +406,6 @@ Game.Buttons = (function () {
         }
         );
         buttons.appendChild(pas);
-
-        /** ------ Stop het spel --------- **/
-        let stop = document.createElement('button');
-        stop.innerHTML = "Stop het spel";
-        $(stop).addClass('btn btn-danger');
-        stop.addEventListener('click', () => {
-            Game.Api.put(`geefOp/${spelToken}`, Game.Data.configMap.spelToken).then(() => {
-                /** TODO: spel opgeven **/
-            });
-        });
-        buttons.appendChild(stop);
 
         /** ------ Verander de image --------- **/
         let image = document.createElement('button');

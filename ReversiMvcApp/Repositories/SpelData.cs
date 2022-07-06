@@ -22,7 +22,6 @@ namespace ReversiMvcApp.Repositories
 {
     public class SpelData : ISpelData
     {
-        readonly ReversiDbContext _context;
         private readonly HttpClient _client = new();
         private string Url => "https://localhost:44326/api/Spel";
         public async Task<List<Spel>> GetSpellen()
@@ -112,7 +111,14 @@ namespace ReversiMvcApp.Repositories
             spel.Speler2Token = currentUserId;
             return spel;
         }
-
-
+        
+        public void GeefOp(string spelToken)
+        {
+            //Voeg de encrypte spelertoken toe aan de FromHeader van de api d.m.v. HttpClient
+            _client.DefaultRequestHeaders.Add("x-speltoken", spelToken);
+            
+            //verzend de request naar de api
+            _client.PostAsync($"{Url}/geefOp", null);
+        }
     }
 }
