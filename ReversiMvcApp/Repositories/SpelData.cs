@@ -60,7 +60,7 @@ namespace ReversiMvcApp.Repositories
         {
             HttpResponseMessage response = await _client.GetAsync($"{Url}/getSpelBySpelerId/{spelerId}");
             string responseBody = await response.Content.ReadAsStringAsync();
-            Debug.WriteLine($"response: responseBody");
+            Debug.WriteLine($"response: {responseBody}");
             return JsonConvert.DeserializeObject<Spel>(responseBody);
         }
 
@@ -116,9 +116,9 @@ namespace ReversiMvcApp.Repositories
         {
             //Voeg de encrypte spelertoken toe aan de FromHeader van de api d.m.v. HttpClient
             _client.DefaultRequestHeaders.Add("x-speltoken", spelToken);
-            
+
             //verzend de request naar de api
-            _client.PostAsync($"{Url}/geefOp", null);
+            _client.PutAsync($"{Url}/geefOp", null);
         }
     }
 }

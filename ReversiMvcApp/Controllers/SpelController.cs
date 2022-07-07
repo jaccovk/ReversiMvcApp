@@ -25,48 +25,9 @@ namespace ReversiMvcApp.Controllers
 
         //give up
         public async Task<IActionResult> GeefOp(string spelerToken)
-        {
-            Spel spel = await _spelData.GetSpelBySpelerId(spelerToken);
-            string speler2 = spel.Speler1Token != spelerToken ? spel.Speler1Token : spel.Speler2Token;
+        { 
             
-            //check if speler has played more games
-            if (await _context?.Spelers?.FirstOrDefaultAsync(s => s.Guid == spelerToken) == null)
-            {
-                Speler speler = new Speler
-                {
-                    Guid = spelerToken,
-                    Naam = this.User.Identity.Name,
-                    AantalVerloren = 1
-                };
-
-                _context.Spelers.Add(speler);
-            }
-            else
-            {
-                Speler speler = await _context?.Spelers?.FirstOrDefaultAsync(s => s.Guid == spelerToken);
-                speler.AantalVerloren++;
-                _context.Spelers.Update(speler);
-            }
-            if (await _context?.Spelers?.FirstOrDefaultAsync(s => s.Guid == speler2) == null)
-            {
-                Speler speler = new Speler
-                {
-                    Guid = spelerToken,
-                    Naam = "TestUser",
-                    AantalGewonnen = 1
-                };
-
-                _context.Spelers.Add(speler);
-            } 
-            else
-            {
-                Speler speler = await _context?.Spelers?.FirstOrDefaultAsync(s => s.Guid == speler2);
-                speler.AantalGewonnen++;
-                _context.Spelers.Update(speler);
-            }
-/*            _context.Spel.Remove(spel); //remove spel in mvc db
-            _context.SaveChanges();*/
-            _spelData.GeefOp(spel.Token); //remove spel in api db
+             //remove spel will happen in Home/Index
             return RedirectToAction("Index", "Home");
         }
 
@@ -113,6 +74,10 @@ namespace ReversiMvcApp.Controllers
 
             await _spelData.NeemDeelAanSpel(token, currPlayerToken);
 
+            return RedirectToAction("SpelBord", "Spel");
+        }
+        public IActionResult JoinEigenSpel(string token)
+        {
             return RedirectToAction("SpelBord", "Spel");
         }
 

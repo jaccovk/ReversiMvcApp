@@ -143,12 +143,34 @@ Game.Reversi = (function(){
         spelToken: "",
         speler: [],
         spel: [],
+
+        afgelopen: false,
         colors: ["geen", "wit", "zwart"],
     };
 
-    const setSpel = async function() {
 
-        await Game.Api.get(`getSpel`, configMap.spelToken).then(json=>{
+    const privateInit = async function (spelToken, spelerToken) {
+        if (!configMap.afgelopen) {
+            configMap.spelToken = spelToken;
+            configMap.speler.token = spelerToken;
+            await setSpel();
+
+            //place board
+            let bord = document.getElementsByClassName('game-board');
+            for (let i = 1; i <= configMap.spel.bord.length; i++) {
+                for (let j = 1; j <= configMap.spel.bord.length; j++) {
+                    //set square
+                    let square = setSquare(i, j);
+                    bord[0].appendChild(square);
+                }
+            }
+        }
+    };
+
+
+    const setSpel = async function () {
+
+        await Game.Api.get(`getSpel`, configMap.spelToken).then(json => {
 
             configMap.spel.bord = json.bord;
             configMap.spel.speler1Token = json.speler1Token;
@@ -161,21 +183,7 @@ Game.Reversi = (function(){
 
     }
 
-    const privateInit = async function (spelToken, spelerToken) {
-        configMap.spelToken = spelToken;
-        configMap.speler.token = spelerToken;
-        await setSpel();
 
-        //place board
-        let bord = document.getElementsByClassName('game-board');
-        for (let i = 1; i <= configMap.spel.bord.length; i++) {
-            for (let j = 1; j <= configMap.spel.bord.length; j++) {
-                //set square
-                let square = setSquare(i, j);
-                bord[0].appendChild(square);
-            }
-        }
-    };
 
 
     const setSquare = function (i, j) {
@@ -193,6 +201,7 @@ Game.Reversi = (function(){
                 });
             }
         });
+
 
         switch(configMap.spel.bord[i-1][j-1]){
             case 1:
@@ -220,6 +229,8 @@ Game.Reversi = (function(){
             square.appendChild(fiche);
         }
     }
+
+
     const getColorFromPlayerToken = function (token) {
         let color = "";
         if (token === configMap.spel.speler1Token) {
@@ -229,6 +240,7 @@ Game.Reversi = (function(){
         }
         return color;
     }
+
 
     const updateBoard = function () {
         //get the board
@@ -257,19 +269,51 @@ Game.Reversi = (function(){
                     }
                 }
             }
+            //update the boarddata
             setSpel();
+            //check if the game is over
+            isAfgelopen(json.bord);
         });
-        isAfgelopen();
     }
 
-    const isAfgelopen = function () {
-        Game.Api.get(`isAfgelopen`, configMap.spelToken).then(json => {
-            if (json === true) {
-                alert(`${json} heeft gewonnen!`);
-                window.location.replace("https://localhost:5001/");
+
+    const isAfgelopen = function (bord) {
+        //get a true or false from the api
+        Game.Api.get(`isAfgelopen`, configMap.spelToken).then(async json => {
+                if (json) {
+                    //show alert who won by counting the count of stones
+                    await alert(`${countFichesByColor("Wit", bord) > countFichesByColor("Zwart", bord) ? "Wit" : "Zwart"} heeft gewonnen!`);
+                    window.location.replace("https://localhost:5001/");
+                    configMap.afgelopen = true;
+                    configMap.spelToken = "";
+                    configMap.speler = [];
+                    configMap.spel = [];
+                } else {
+                    //check if one of the colors is 0
+                    if (countFichesByColor("Wit", bord) === 0 || countFichesByColor("Zwart", bord) === 0) {
+                        let loser = countFichesByColor("Wit", bord) === 0 ? "Zwart" : "Wit";
+                        let winner = countFichesByColor("Wit", bord) === 0 ? "Wit" : "Zwart";
+                        configMap.afgelopen = true;
+                        await alert(`${loser} heeft geen fiches meer dus ${winner} heeft gewonnen!!`);
+                    }
+                }
+            }
+        );
+    }
+
+    const countFichesByColor = (color, bord) => {
+        let wit = 0;
+        let zwart = 0;
+        for (let i = 0; i < bord.length; i++) {
+            for (let j = 0; j < bord.length; j++) {
+                if (bord[i][j] === 1) {
+                    wit++;
+                } else if (bord[i][j] === 2) {
+                    zwart++;
+                }
             }
         }
-        );
+        return color === "Wit" ? wit : zwart;
     }
 
     return {
@@ -280,7 +324,6 @@ Game.Reversi = (function(){
 Game.Api = (function () {
 
     const apiUrl = Game.Data.configMap.apiUrl;
-
 
     const get = function (url, spelToken, params) {
 

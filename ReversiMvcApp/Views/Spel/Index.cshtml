@@ -1,20 +1,21 @@
 ﻿@using System.Security.Claims
 @model IEnumerable<ReversiMvcApp.Models.Spel>
 
-   
+
 
 <h1>Spel Overzicht</h1>
 
 @if (ViewBag.Message != null)
 {
     <script type="text/javascript">
-        window.onload = function () {
+        window.onload = function() {
             alert("@ViewBag.Message");
         };
     </script>
 }
-@if(Model != null){
-<h4>Choose wisely....</h4>
+@if (Model != null)
+{
+    <h4>Choose wisely....</h4>
 }
 <table class="table">
     <thead>
@@ -29,7 +30,8 @@
         </tr>
     </thead>
     <tbody>
-        @if (Model != null) {
+        @if (Model != null)
+        {
             @foreach (var item in Model)
             {
                 <tr>
@@ -46,11 +48,18 @@
                                 <button class="btn btn-primary">Aanvallen!!</button>
                             </form>
                         }
+                        else
+                        {
+                            <form asp-action="JoinEigenSpel" asp-controller="Spel" asp-route-token="@item.Token">
+                                <button class="btn btn-primary">Terug naar spel</button>
+                            </form>
+                        }
                     </td>
                 </tr>
             }
         }
-        else {
+        else
+        {
             <i>Er zijn geen spellen gevonden. Creëer nu een spel!!</i>
         }
     </tbody>
