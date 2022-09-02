@@ -279,6 +279,7 @@ Game.Reversi = (function(){
 
     const isAfgelopen = function (bord) {
         //get a true or false from the api
+        debugger;
         Game.Api.get(`isAfgelopen`, configMap.spelToken).then(async json => {
                 if (json) {
                     //show alert who won by counting the count of stones

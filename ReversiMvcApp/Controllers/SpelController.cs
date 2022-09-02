@@ -23,13 +23,12 @@ namespace ReversiMvcApp.Controllers
         }
 
 
-        //give up
+/*        //give up
         public async Task<IActionResult> GeefOp(string spelerToken)
         { 
-            
              //remove spel will happen in Home/Index
             return RedirectToAction("Index", "Home");
-        }
+        }*/
 
         // GET: Spel
         [Authorize]
@@ -44,7 +43,7 @@ namespace ReversiMvcApp.Controllers
         [Authorize]
         public async Task<IActionResult> SpelBord()
         {
-            ClaimsPrincipal currUser = this.User;
+            ClaimsPrincipal currUser = this.User; 
             var currentPlayerToken = currUser.FindFirst(ClaimTypes.NameIdentifier).Value;
 
             if (await _spelData.GetSpelBySpelerId(currentPlayerToken) != null)
@@ -66,7 +65,7 @@ namespace ReversiMvcApp.Controllers
             return RedirectToAction("Index", "Spel");
         }
 
-        //PUT:spel/
+        //PUT:spel/32ou54rmk345kl354lk
         public async Task<IActionResult> NeemDeelAanSpel(string token)
         {
             ClaimsPrincipal currPlayer = this.User;

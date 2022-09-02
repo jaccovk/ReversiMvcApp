@@ -112,13 +112,13 @@ namespace ReversiMvcApp.Repositories
             return spel;
         }
         
-        public void GeefOp(string spelToken)
+/*        public void GeefOp(string spelToken)
         {
             //Voeg de encrypte spelertoken toe aan de FromHeader van de api d.m.v. HttpClient
             _client.DefaultRequestHeaders.Add("x-speltoken", spelToken);
 
             //verzend de request naar de api
             _client.PutAsync($"{Url}/geefOp", null);
-        }
+        }*/
     }
 }

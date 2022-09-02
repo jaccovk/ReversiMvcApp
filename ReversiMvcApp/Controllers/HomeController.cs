@@ -40,7 +40,9 @@ namespace ReversiMvcApp.Controllers
                     string speler2 = spel.Speler1Token != currentPlayerToken ? spel.Speler1Token : spel.Speler2Token;
 
                     await CalculatePoints(currentPlayerToken, speler2);
-                    _spelData.GeefOp(spel.Token);
+                    spel.Afgelopen = true;
+                    _context.Update(spel);
+                    //_spelData.GeefOp(spel.Token);
                 }
 
 
