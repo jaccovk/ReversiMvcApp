@@ -28,7 +28,7 @@ namespace ReversiMvcApp.Repositories
         {
             try
             {
-                HttpResponseMessage response = await _client.GetAsync($"{Url}/getSpellen");
+                HttpResponseMessage response = await _client.GetAsync($"{Url}/getWachtendeSpellen");
                 response.EnsureSuccessStatusCode();
                 string responseBody = await response.Content.ReadAsStringAsync();
                 Debug.WriteLine(responseBody);
@@ -43,6 +43,25 @@ namespace ReversiMvcApp.Repositories
                 return null;
             }
         }
+        public async Task<List<Spel>> GetSpellenBySpelerToken(string spelerToken)
+        {
+            try
+            {
+                _client.DefaultRequestHeaders.Add("x-spelertoken", spelerToken);
+                HttpResponseMessage response = await _client.GetAsync($"{Url}/getSpellenBySpelerToken");
+                response.EnsureSuccessStatusCode();
+                string responseBody = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine(responseBody);
+                return JsonConvert.DeserializeObject<List<Spel>>(responseBody);
+            }
+            catch (HttpRequestException e)
+            {
+                Console.WriteLine("\nException Caught!");
+                Console.WriteLine("Message :{0} ", e.Message);
+                return null;
+            }
+        }
+        
 
         public async Task<Spel> NeemDeelAanSpel(string token, string currPlayerToken)
         {
@@ -90,6 +109,17 @@ namespace ReversiMvcApp.Repositories
             return "somethingWrong";
         }
 
+        public async Task<bool> UpdateSpelAfgelopen(string spelToken, Spel spel)
+        {
+            _client.DefaultRequestHeaders.Add("x-speltoken", spelToken);
+
+            StringContent stringContent = new StringContent(JsonConvert.SerializeObject(spel), Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await _client.PutAsync($"{Url}/updateSpelAfgelopen", stringContent);
+
+            return response.IsSuccessStatusCode;
+        }
+
         public async Task<Spel> GetSpelDetails(string? id, ClaimsPrincipal user)
         {
             //verstuur de encrypte spelertoken naar de header 
@@ -112,13 +142,20 @@ namespace ReversiMvcApp.Repositories
             return spel;
         }
         
-/*        public void GeefOp(string spelToken)
+        public async Task<bool> RemoveSpelAsync(string spelerToken)
+        {
+            _client.DefaultRequestHeaders.Add("x-spelertoken", spelerToken);
+            var response = await _client.DeleteAsync($"{Url}/removeSpel");
+            return response.IsSuccessStatusCode;
+        }
+
+        public void GeefOp(string spelerToken)
         {
             //Voeg de encrypte spelertoken toe aan de FromHeader van de api d.m.v. HttpClient
-            _client.DefaultRequestHeaders.Add("x-speltoken", spelToken);
+            _client.DefaultRequestHeaders.Add("x-spelertoken", spelerToken);
 
             //verzend de request naar de api
             _client.PutAsync($"{Url}/geefOp", null);
-        }*/
+        }
     }
 }

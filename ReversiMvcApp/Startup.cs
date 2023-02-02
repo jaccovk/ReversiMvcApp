@@ -27,6 +27,7 @@ namespace ReversiMvcApp
                     Configuration.GetConnectionString("DefaultConnection")));
             services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ReversiDbContext>();
             services.AddControllersWithViews();
             services.AddScoped<ISpelData, SpelData>();
@@ -66,6 +67,14 @@ namespace ReversiMvcApp
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
+
+            //seed roles using SeedData
+            using (var serviceScope = app.ApplicationServices.CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetService<ReversiDbContext>();
+                context.Database.Migrate();
+                SeedData.Initialize(context);
+            }
         }
     }
 }

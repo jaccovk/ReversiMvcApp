@@ -3,22 +3,20 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ReversiMvcApp.Data;
 
-namespace ReversiMvcApp.Data.Migrations
+namespace ReversiMvcApp.Migrations
 {
     [DbContext(typeof(ReversiDbContext))]
-    [Migration("20220328165549_InitialCreateReversi")]
-    partial class InitialCreateReversi
+    partial class ReversiDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.15")
+                .HasAnnotation("ProductVersion", "5.0.17")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -221,10 +219,45 @@ namespace ReversiMvcApp.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("ReversiMvcApp.Models.Spel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("AandeBeurt")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Afgelopen")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Omschrijving")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Speler1Token")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Speler2Token")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Token")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Winnaar")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Spel");
+                });
+
             modelBuilder.Entity("ReversiMvcApp.Models.Speler", b =>
                 {
-                    b.Property<string>("Guid")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("AantalGelijk")
                         .HasColumnType("int");
@@ -235,10 +268,13 @@ namespace ReversiMvcApp.Data.Migrations
                     b.Property<int>("AantalVerloren")
                         .HasColumnType("int");
 
+                    b.Property<string>("Guid")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Naam")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Guid");
+                    b.HasKey("Id");
 
                     b.ToTable("Spelers");
                 });

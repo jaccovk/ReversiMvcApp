@@ -7,19 +7,38 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welkom  @User.Identity.Name!</h1>
-    <form asp-controller="Spel" asp-action="Index">
-        <button class="btn btn-primary">Zoek voor Spellen</button>
-    </form>
+    <h1 class="display-4">Welkom @User.Identity.Name!</h1>
 </div>
-@if (User.Identity.Name != null)
+@if (User.Identity.Name != null && User.IsInRole("Speler"))
 {
-    <div class="row">
-        <div class="col-md-10">
-            <h2>Overzicht van jouw Reversi skills:</h2>
-            <p>[@Model?.AantalGewonnen] Reversi Gewonnen</p>
-            <p>[@Model?.AantalGelijk] Reversi Gelijkspel</p>
-            <p>[@Model?.AantalVerloren] Reversi Verloren</p>
+    <div>
+        <div class="text-center">
+            <form asp-controller="Spel" asp-action="Index">
+                <button class="btn btn-primary">Zoek voor Spellen</button>
+            </form>
         </div>
+        <div class="row">
+            <div class="col-md-10">
+                <h2>Overzicht van jouw Reversi skills:</h2>
+                <p>[@Model?.AantalGewonnen] Reversi Gewonnen</p>
+                <p>[@Model?.AantalGelijk] Reversi Gelijkspel</p>
+                <p>[@Model?.AantalVerloren] Reversi Verloren</p>
+            </div>
+        </div>
+    </div>
+}
+
+@if (User.IsInRole("Beheerder") || User.IsInRole("Mediator"))
+{
+    <div class="text-center">
+        @if (User.IsInRole("Beheerder"))
+        {
+            <form asp-controller="Admin" asp-action="Roles">
+                <button class="btn btn-primary">Beheer Rollen</button>
+            </form>
+        }
+        <form asp-controller="Admin" asp-action="Delete">
+            <button class="btn btn-primary">Beheer Spelers</button>
+        </form>
     </div>
 }

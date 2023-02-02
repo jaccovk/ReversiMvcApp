@@ -1,0 +1,15 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Reversi</title><meta name="viewport" content="width=device-width,initial-scale=1"><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous"><script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><script type="text/javascript" src="js/feedbackWidget.js"></script><script type="text/javascript" src="js/game.js"></script><script src="js/game.template.js"></script><script type="text/javascript" src="js/game.data.js"></script><script type="text/javascript" src="js/game.model.js"></script><script type="text/javascript" src="js/game.reversi.js"></script><link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/gulpwatch.scss"><script src="dist/js/vendor.js"></script><script src="dist/js/templates.js"></script></head><body><button id="btnSucc" name="Success" style="color:green">Show</button><aside id="feedback-success" class="widget fade-in" role="alert"><div><i>✅</i> <i>Mike wil deelnemen aan jouw spel. Geef akkoord.</i><div><div><button class="btn btn-success widget-btnAccept">Accepteren</button></div><div><button class="btn btn-danger">Weigeren</button></div></div></div></aside><div style="background:#ff0;width:100px;height:100px" id="vierkant"></div><script>$(document).ready(function () {
+
+        let successWidget = new FeedbackWidget("feedback-success");
+
+        $("#btnSucc").on("click", function () {
+            successWidget.show("yeet", "success");
+        });
+
+        function afterInit() {
+            console.log('Game init voltooid')
+        }
+
+        Game.init(afterInit);
+
+    });</script></body></html>

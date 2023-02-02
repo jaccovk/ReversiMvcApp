@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ReversiMvcApp.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace ReversiMvcApp.Data
 {
@@ -11,7 +12,7 @@ namespace ReversiMvcApp.Data
     {
         public ReversiDbContext(DbContextOptions<ReversiDbContext> options)
             : base(options)
-        {
+        { 
         }
 
         public DbSet<Speler> Spelers { get; set; }

@@ -1,0 +1,42 @@
+﻿@{
+    ViewData["Title"] = "Delete";
+}
+
+@model IEnumerable<IdentityUser>
+
+<h1>Delete</h1>
+<h6>Zowel de speler als zijn spellen worden verwijderd</h6>
+
+@* Table with all usernames and delete button *@
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.First().UserName)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+            @foreach (var item in Model)
+            {
+                string userName = item.UserName;
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserName)
+                    </td>
+                    <td>
+                        <form method="post" asp-action="DeleteSpeler">
+                            <input type="hidden" name="userName" asp-for="@userName" />
+                            <input type="submit" value="Delete" class="btn btn-danger" />
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+

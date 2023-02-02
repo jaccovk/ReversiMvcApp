@@ -23,22 +23,43 @@ namespace ReversiMvcApp.Controllers
         }
 
 
-/*        //give up
-        public async Task<IActionResult> GeefOp(string spelerToken)
-        { 
-             //remove spel will happen in Home/Index
-            return RedirectToAction("Index", "Home");
-        }*/
+        
 
+        //give up
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> GeefOp(string spelerToken)
+        {
+
+            var speler = await _context.Spelers.Where(s => s.Guid == spelerToken).FirstOrDefaultAsync();
+            _spelData.GeefOp(spelerToken);
+            return RedirectToAction("Index", "Home");
+        }
+
+
+
+
+        
         // GET: Spel
         [Authorize]
         public async Task<IActionResult> Index()
         {
+            ClaimsPrincipal currUser = this.User;
+            var currentPlayerToken = currUser.FindFirst(ClaimTypes.NameIdentifier).Value;
+
             if (await _spelData.GetSpellen() != null)
                 return View(await _spelData.GetSpellen());
             return View();
+
+/*            if (await _spelData.GetSpellenBySpelerToken(currentPlayerToken) != null)
+                return View(await _spelData.GetSpellenBySpelerToken(currentPlayerToken));
+            return View();*/
         }
 
+
+
+
+        
         // GET: Spel/SpelBord/5
         [Authorize]
         public async Task<IActionResult> SpelBord()
@@ -65,6 +86,10 @@ namespace ReversiMvcApp.Controllers
             return RedirectToAction("Index", "Spel");
         }
 
+        
+
+
+        
         //PUT:spel/32ou54rmk345kl354lk
         public async Task<IActionResult> NeemDeelAanSpel(string token)
         {
@@ -72,6 +97,17 @@ namespace ReversiMvcApp.Controllers
             var currPlayerToken = currPlayer.FindFirst(ClaimTypes.NameIdentifier).Value;
 
             await _spelData.NeemDeelAanSpel(token, currPlayerToken);
+
+            // check of de speler al in de database staat, zo niet, voeg hem toe
+            if (_context.Spelers.Where(s => s.Guid == currPlayerToken).Count() == 0)
+            {
+                _context.Add(new Speler
+                {
+                    Guid = currPlayerToken,
+                    Naam = User.FindFirst(ClaimTypes.Name)?.Value,
+                });
+                await _context.SaveChangesAsync();
+            }
 
             return RedirectToAction("SpelBord", "Spel");
         }
@@ -88,9 +124,10 @@ namespace ReversiMvcApp.Controllers
             return View();
         }
 
+
+
+        
         // POST: Spel/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -110,6 +147,15 @@ namespace ReversiMvcApp.Controllers
 
                     if (check == "ok")
                     {
+                        // als het spel is toegevoegd, voeg de speler toe aan de database
+                        if (_context.Spelers.Where(s => s.Guid == spel.Speler1Token).Count() == 0)
+                        {
+                            _context.Add(new Speler { 
+                                Guid = spel.Speler1Token,
+                                Naam = User.FindFirst(ClaimTypes.Name)?.Value,
+                            });
+                            await _context.SaveChangesAsync();
+                        }
                         return RedirectToAction("SpelBord");
                     }
                     if (check == "noOmschrijving")

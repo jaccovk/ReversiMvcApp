@@ -27,7 +27,7 @@ namespace ReversiMvcApp.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> IndexAsync()
+        public IActionResult IndexAsync()
         {
             Speler speler = null;
             ClaimsPrincipal currUser = this.User;
@@ -35,16 +35,6 @@ namespace ReversiMvcApp.Controllers
             {
                 var currentPlayerToken = currUser.FindFirst(ClaimTypes.NameIdentifier).Value;
                 Spel spel = _spelData.GetSpelBySpelerId(currentPlayerToken)?.Result;
-                if (spel != null && spel.Speler1Token != null && spel.Speler2Token != null)
-                {
-                    string speler2 = spel.Speler1Token != currentPlayerToken ? spel.Speler1Token : spel.Speler2Token;
-
-                    await CalculatePoints(currentPlayerToken, speler2);
-                    spel.Afgelopen = true;
-                    _context.Update(spel);
-                    //_spelData.GeefOp(spel.Token);
-                }
-
 
                 ViewData["spelerId"] = currentPlayerToken;
                 ViewData["spelId"] = spel?.Token;
@@ -52,49 +42,8 @@ namespace ReversiMvcApp.Controllers
             }
 
             if (speler != null) return View(speler);
-                    return View();
+            return View();
         }
-
-        public async Task CalculatePoints(string spelerToken, string speler2)
-        {
-            //check if speler has played more games
-            if (await _context?.Spelers?.FirstOrDefaultAsync(s => s.Guid == spelerToken) == null)
-            {
-                Speler speler = new Speler
-                {
-                    Guid = spelerToken,
-                    Naam = this.User.Identity.Name,
-                    AantalVerloren = 1
-                };
-
-                _context.Spelers.Add(speler);
-            }
-            else
-            {
-                Speler speler = await _context?.Spelers?.FirstOrDefaultAsync(s => s.Guid == spelerToken);
-                speler.AantalVerloren++;
-                _context.Spelers.Update(speler);
-            }
-            if (await _context?.Spelers?.FirstOrDefaultAsync(s => s.Guid == speler2) == null)
-            {
-                Speler speler = new Speler
-                {
-                    Guid = spelerToken,
-                    Naam = "TestUser",
-                    AantalGewonnen = 1
-                };
-
-                _context.Spelers.Add(speler);
-            }
-            else
-            {
-                Speler speler = await _context?.Spelers?.FirstOrDefaultAsync(s => s.Guid == speler2);
-                speler.AantalGewonnen++;
-                _context.Spelers.Update(speler);
-            }
-            _context.SaveChanges();
-        }
-
 
 
         [Authorize]

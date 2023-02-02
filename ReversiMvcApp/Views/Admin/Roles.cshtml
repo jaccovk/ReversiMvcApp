@@ -1,0 +1,71 @@
+﻿@*
+    return a list with { UserName, Role }
+*@
+
+@model IEnumerable<ReversiMvcApp.Models.RoleManager>
+
+
+@{
+    ViewData["Title"] = "Beheer Rollen";
+}
+
+<h1>Beheer Rollen</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.UserName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Role)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            string userName = item.UserName;
+            string role = item.Role;
+            <tr>
+                <form asp-action="ChangeRole" method="post">
+                <td>
+                        @Html.DisplayFor(modelItem => item.UserName)
+                    <input type="hidden" asp-for="@userName"/>
+                </td>
+                <td>
+                    <select asp-for="@role">
+                            @if (item.Role == "Speler")
+                            {
+                            <option value="Speler" selected>Speler</option>
+                            }
+                            else
+                            {
+                            <option value="Speler">Speler</option>
+                            }
+                            @if (item.Role == "Beheerder")
+                            {
+                            <option value="Beheerder" selected>Beheerder</option>
+                            }
+                            else
+                            {
+                            <option value="Beheerder">Beheerder</option>
+                            }
+                            @if (item.Role == "Mediator")
+                            {
+                            <option value="Mediator" selected>Mediator</option>
+                            }
+                            else
+                            {
+                            <option value="Mediator">Mediator</option>
+                            }
+                    </select>
+                </td>
+                <td>
+                    <input type="submit" value="Wijzig" />
+                </td>
+                </form>
+            </tr>
+        }
+    </tbody>
+</table>
