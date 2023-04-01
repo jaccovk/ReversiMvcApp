@@ -148,6 +148,10 @@ Game.Reversi = (function(){
         colors: ["geen", "wit", "zwart"],
     };
 
+    const countFichesByColor = (color, bord) => {
+        return Game.Stats.countFichesByColor(color, bord);
+    }
+
 
     const privateInit = async function (spelToken, spelerToken) {
         if (!configMap.afgelopen) {
@@ -164,8 +168,33 @@ Game.Reversi = (function(){
                     bord[0].appendChild(square);
                 }
             }
+
+            //set cat facts
+            setCatFacts();
+
+            //set chart
+            setChart();
         }
     };
+
+    const setCatFacts = async function () {
+        let catFacts = await Game.Api.getCatFacts();
+        console.log(catFacts.data[0]);
+        document.getElementsByClassName('cat-facts')[0].innerText = catFacts.data[0];
+    }
+
+    const setChart = function () {
+        const ctx = document.getElementById('myChart');
+        const stats = Game.Stats.getStats(configMap.spel.bord);
+        let chart = Game.Stats.getChart(ctx);
+
+        setInterval(() => {
+            let aantalWit = stats.aantalWit;
+            let aantalZwart = stats.aantalZwart;
+            chart.data.datasets[0].data = [aantalWit, aantalZwart];
+            chart.update();
+        }, 1000);
+    }
 
 
     const setSpel = async function () {
@@ -182,9 +211,6 @@ Game.Reversi = (function(){
         document.getElementById('beurt').innerText = `${configMap.spel.aandeBeurt === 1 ? "Wit" : "Zwart"} is aan de beurt.`;
 
     }
-
-
-
 
     const setSquare = function (i, j) {
         let square = document.createElement('div');
@@ -273,7 +299,7 @@ Game.Reversi = (function(){
             setSpel();
             //check if the game is over
             isAfgelopen(json.bord);
-        }).catch(() => calculatePoints_AndEndGame());
+        }).catch(() => calculatePoints_AndEndGame(configMap.spel.bord));
     }
 
 
@@ -282,7 +308,7 @@ Game.Reversi = (function(){
         Game.Api.get(`isAfgelopen`, configMap.spelToken).then(async json => {
                 if (json) {
                     //show alert who won by counting the count of stones
-                    await calculatePoints_AndEndGame();
+                    await calculatePoints_AndEndGame(bord);
                 } else {
                     //check if one of the colors is 0
                     if (countFichesByColor("Wit", bord) === 0 || countFichesByColor("Zwart", bord) === 0) {
@@ -296,22 +322,7 @@ Game.Reversi = (function(){
         );
     }
 
-    const countFichesByColor = (color, bord) => {
-        let wit = 0;
-        let zwart = 0;
-        for (let i = 0; i < bord.length; i++) {
-            for (let j = 0; j < bord.length; j++) {
-                if (bord[i][j] === 1) {
-                    wit++;
-                } else if (bord[i][j] === 2) {
-                    zwart++;
-                }
-            }
-        }
-        return color === "Wit" ? wit : zwart;
-    }
-
-    async function calculatePoints_AndEndGame(){
+    async function calculatePoints_AndEndGame(bord){
         await alert(`${countFichesByColor("Wit", bord) > countFichesByColor("Zwart", bord) ? "Wit" : "Zwart"} heeft gewonnen!`);
         window.location.replace("https://localhost:5001/");
         configMap.afgelopen = true;
@@ -325,9 +336,15 @@ Game.Reversi = (function(){
         updateBoard: updateBoard,
     }
 })();
+
 Game.Api = (function () {
 
     const apiUrl = Game.Data.configMap.apiUrl;
+
+    const getCatFacts = function () {
+        return fetch('https://meowfacts.herokuapp.com/')
+            .then(res => res.json());
+    }
 
     const get = function (url, spelToken, params) {
 
@@ -361,8 +378,10 @@ Game.Api = (function () {
     return {
         get: get,
         put: put,
+        getCatFacts: getCatFacts
     }
 })();
+
 /*$(function() { //wachtfunctie
 console.log( "ready!" );
 
@@ -454,9 +473,9 @@ Game.Buttons = (function () {
         );
         buttons.appendChild(pas);
 
-        /** ------ Verander de image --------- **/
+        /** ------ Verander de catfact --------- **/
         let image = document.createElement('button');
-        image.innerHTML = "Verander van image";
+        image.innerHTML = "Verander van catfact";
         $(image).addClass('btn btn-outline-info');
         image.addEventListener('click', () => {
             window.location.reload();
@@ -467,6 +486,71 @@ Game.Buttons = (function () {
         addButtons: addButtons
     }
 })();
+
+Game.Stats = (function () {
+    const configMap = {
+        stats: {
+            aantalWit: 0,
+            aantalZwart: 0,
+        }
+    }
+    const getStats = function (bord) {
+        configMap.stats.aantalWit = countFichesByColor("Wit", bord);
+        configMap.stats.aantalZwart = countFichesByColor("Zwart", bord);
+        return configMap.stats;
+    }
+
+    const getChart = function (ctx) {
+        return new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Wit', 'Zwart'],
+                datasets: [{
+                    label: 'Aantal fiches',
+                    data: [2, 2],
+                    backgroundColor: [
+                        'rgba(255, 255, 255, 1)',
+                        'rgba(0, 0, 0, 1)',
+                    ],
+                    borderColor: [
+                        'rgba(255, 255, 255, 1)',
+                        'rgba(0, 0, 0, 1)',
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    const countFichesByColor = (color, bord) => {
+        let wit = 0;
+        let zwart = 0;
+        for (let i = 0; i < bord.length; i++) {
+            for (let j = 0; j < bord.length; j++) {
+                if (bord[i][j] === 1) {
+                    wit++;
+                } else if (bord[i][j] === 2) {
+                    zwart++;
+                }
+            }
+        }
+        return color === "Wit" ? wit : zwart;
+    }
+
+    return {
+        getStats: getStats,
+        getChart: getChart,
+        countFichesByColor: countFichesByColor
+    }
+})();
+
 Game.Template = (function () {
     const getTemplate = function (templateName) {
         let template = spa_templates.templates;

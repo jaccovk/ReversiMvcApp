@@ -16,7 +16,7 @@
     <div id="beurt" class="player-turn-text">
     </div>
 
-    <div class="row">
+    <div class="row game-bg">
         <div class="col" id="buttons">
             <form asp-action="GeefOp" asp-route-spelerToken="@spelerToken" method="post">
             <button class="btn btn-danger">Geef op</button>
@@ -26,6 +26,10 @@
             <div class="game-board"></div>
         </div>
     </div>
+
+    <div class="cat-facts typed"></div>
+
+    <canvas id="myChart"></canvas>
 
     <script type="text/javascript">
         $(document).ready(function() {

@@ -1,5 +1,8 @@
 this["spa_templates"] = this["spa_templates"] || {};
 this["spa_templates"]["templates"] = this["spa_templates"]["templates"] || {};
+this["spa_templates"]["templates"]["stats"] = Handlebars.template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
+    return "<canvas id=\"myChart\"></canvas>\r\n";
+},"useData":true});
 this["spa_templates"]["templates"]["feedbackWidget"] = this["spa_templates"]["templates"]["feedbackWidget"] || {};
 this["spa_templates"]["templates"]["feedbackWidget"]["body"] = Handlebars.template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, helper, lookupProperty = container.lookupProperty || function(parent, propertyName) {

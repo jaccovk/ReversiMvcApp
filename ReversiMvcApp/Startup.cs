@@ -23,8 +23,8 @@ namespace ReversiMvcApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ReversiDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlite(
+                    Configuration.GetConnectionString("SqliteConnection")));
             services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddRoles<IdentityRole>()
