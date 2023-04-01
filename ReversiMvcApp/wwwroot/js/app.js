@@ -174,6 +174,9 @@ Game.Reversi = (function(){
 
             //set chart
             setChart();
+
+            //set stats
+            setStats();
         }
     };
 
@@ -181,6 +184,18 @@ Game.Reversi = (function(){
         let catFacts = await Game.Api.getCatFacts();
         console.log(catFacts.data[0]);
         document.getElementsByClassName('cat-facts')[0].innerText = catFacts.data[0];
+    }
+
+    const setStats = function () {
+        const gameStats = document.getElementsByClassName('game-stats')[0];
+        const stats = Game.Stats.getStats(configMap.spel.bord);
+        setInterval(() => {
+            gameStats.innerHTML = `
+            <hr/>
+                ${stats.witIsWinning ? "Wit" : "Zwart"}  is aan het winnen.<hr/>
+                Er zijn nog ${stats.aantalLegeVelden} lege velden.
+            <hr/>`;
+        }, 1000);
     }
 
     const setChart = function () {
@@ -492,11 +507,15 @@ Game.Stats = (function () {
         stats: {
             aantalWit: 0,
             aantalZwart: 0,
+            witIsWinning: false,
+            aantalLegeVelden: 0,
         }
     }
     const getStats = function (bord) {
         configMap.stats.aantalWit = countFichesByColor("Wit", bord);
         configMap.stats.aantalZwart = countFichesByColor("Zwart", bord);
+        configMap.stats.aantalLegeVelden = (bord.length * bord.length) - configMap.stats.aantalWit - configMap.stats.aantalZwart;
+        configMap.stats.witIsWinning = configMap.stats.aantalWit > configMap.stats.aantalZwart;
         return configMap.stats;
     }
 
