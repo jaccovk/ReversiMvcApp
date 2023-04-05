@@ -1,16 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using ReversiMvcApp.Data;
 using ReversiMvcApp.Models;
-using System;
-using System.Collections.Generic;
+using ReversiMvcApp.Repositories;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-using ReversiMvcApp.Repositories;
-using ReversiMvcApp.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace ReversiMvcApp.Controllers
 {

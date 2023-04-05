@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using ReversiMvcApp.Models;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
-using System.Security.Policy;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using ReversiMvcApp.Models;
 
 namespace ReversiMvcApp.Repositories
 {

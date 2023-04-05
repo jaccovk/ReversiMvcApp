@@ -1,11 +1,7 @@
-﻿using System;
+﻿using ReversiMvcApp.Models;
 using System.Collections.Generic;
-using System.Net.Http;
-using System.Runtime.InteropServices.ComTypes;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using ReversiMvcApp.Models;
 
 namespace ReversiMvcApp.Repositories
 {

@@ -1,13 +1,12 @@
-﻿using System.Diagnostics;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ReversiMvcApp.Data;
 using ReversiMvcApp.Models;
 using ReversiMvcApp.Repositories;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace ReversiMvcApp.Controllers
 {
@@ -23,7 +22,7 @@ namespace ReversiMvcApp.Controllers
         }
 
 
-        
+
 
         //give up
         [Authorize]
@@ -39,7 +38,7 @@ namespace ReversiMvcApp.Controllers
 
 
 
-        
+
         // GET: Spel
         [Authorize]
         public async Task<IActionResult> Index()
@@ -51,20 +50,20 @@ namespace ReversiMvcApp.Controllers
                 return View(await _spelData.GetSpellen());
             return View();
 
-/*            if (await _spelData.GetSpellenBySpelerToken(currentPlayerToken) != null)
-                return View(await _spelData.GetSpellenBySpelerToken(currentPlayerToken));
-            return View();*/
+            /*            if (await _spelData.GetSpellenBySpelerToken(currentPlayerToken) != null)
+                            return View(await _spelData.GetSpellenBySpelerToken(currentPlayerToken));
+                        return View();*/
         }
 
 
 
 
-        
+
         // GET: Spel/SpelBord/5
         [Authorize]
         public async Task<IActionResult> SpelBord()
         {
-            ClaimsPrincipal currUser = this.User; 
+            ClaimsPrincipal currUser = this.User;
             var currentPlayerToken = currUser.FindFirst(ClaimTypes.NameIdentifier).Value;
 
             if (await _spelData.GetSpelBySpelerId(currentPlayerToken) != null)
@@ -86,10 +85,10 @@ namespace ReversiMvcApp.Controllers
             return RedirectToAction("Index", "Spel");
         }
 
-        
 
 
-        
+
+
         //PUT:spel/32ou54rmk345kl354lk
         public async Task<IActionResult> NeemDeelAanSpel(string token)
         {
@@ -126,7 +125,7 @@ namespace ReversiMvcApp.Controllers
 
 
 
-        
+
         // POST: Spel/Create
         [Authorize]
         [HttpPost]
@@ -150,7 +149,8 @@ namespace ReversiMvcApp.Controllers
                         // als het spel is toegevoegd, voeg de speler toe aan de database
                         if (_context.Spelers.Where(s => s.Guid == spel.Speler1Token).Count() == 0)
                         {
-                            _context.Add(new Speler { 
+                            _context.Add(new Speler
+                            {
                                 Guid = spel.Speler1Token,
                                 Naam = User.FindFirst(ClaimTypes.Name)?.Value,
                             });

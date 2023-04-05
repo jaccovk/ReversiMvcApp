@@ -1,8 +1,6 @@
 ﻿namespace ReversiMvcApp.Data
 {
     using Microsoft.AspNetCore.Identity;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.DependencyInjection;
     using Models;
     using System.Linq;
 
@@ -20,7 +18,8 @@
             if (!context.Roles.Any())
             {
                 context.Roles.Add(
-                    new IdentityRole {
+                    new IdentityRole
+                    {
                         Name = Roles.Speler.ToString(),
                         NormalizedName = Roles.Speler.ToString().ToUpper()
                     });
@@ -39,7 +38,7 @@
                 context.SaveChanges();
             }
         }
-        
+
         private static void SeedAdmin(ReversiDbContext context)
         {
             if (!context.Users.Any())
@@ -73,7 +72,7 @@
                 context.SaveChanges();
             }
         }
-        
-        
+
+
     }
 }

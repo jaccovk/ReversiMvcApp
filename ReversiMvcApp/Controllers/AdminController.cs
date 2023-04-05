@@ -6,8 +6,6 @@ using ReversiMvcApp.Data;
 using ReversiMvcApp.Models;
 using ReversiMvcApp.Repositories;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace ReversiMvcApp.Controllers
@@ -107,7 +105,7 @@ namespace ReversiMvcApp.Controllers
             // add a point to the opponent
             Spel spel = _spelData.GetSpelBySpelerId(currPlayerToken)?.Result;
             string speler2token = spel.Speler1Token != currPlayerToken ? spel.Speler1Token : spel.Speler2Token;
-            
+
             Speler speler2 = await _context?.Spelers?.FirstOrDefaultAsync(s => s.Guid == speler2token);
             speler2.AantalGewonnen++;
             _context.Spelers.Update(speler2);
@@ -120,7 +118,7 @@ namespace ReversiMvcApp.Controllers
                         {
                             _context.SaveChanges();
                         }*/
-            
+
             Speler speler = await _context?.Spelers?.FirstOrDefaultAsync(s => s.Guid == currPlayerToken);
             _context.Spelers.Remove(speler);
 

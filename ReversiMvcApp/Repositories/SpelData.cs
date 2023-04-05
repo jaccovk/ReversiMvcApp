@@ -1,29 +1,19 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using ReversiMvcApp.Models;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using System.Security.Claims;
-using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Newtonsoft.Json;
-using ReversiMvcApp.Data;
-using ReversiMvcApp.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 
 namespace ReversiMvcApp.Repositories
 {
     public class SpelData : ISpelData
     {
         private readonly HttpClient _client = new();
-        private string Url => "https://localhost:44326/api/Spel";
+        private readonly string Url = Settings.Url;
         public async Task<List<Spel>> GetSpellen()
         {
             try
@@ -61,7 +51,7 @@ namespace ReversiMvcApp.Repositories
                 return null;
             }
         }
-        
+
 
         public async Task<Spel> NeemDeelAanSpel(string token, string currPlayerToken)
         {
@@ -103,7 +93,7 @@ namespace ReversiMvcApp.Repositories
 
             //maak een nieuw response message aan en wacht tot de httpClient de post request heeft uitgevoerd en een OK message heeft teruggekregen.
             HttpResponseMessage response = await _client.PostAsync($"{Url}/createGame", content);
-            
+
             //controleer of de client een success heeft gereturnd. 
             if (response.IsSuccessStatusCode) return "ok";
             return "somethingWrong";
@@ -141,7 +131,7 @@ namespace ReversiMvcApp.Repositories
             spel.Speler2Token = currentUserId;
             return spel;
         }
-        
+
         public async Task<bool> RemoveSpelAsync(string spelerToken)
         {
             _client.DefaultRequestHeaders.Add("x-spelertoken", spelerToken);
