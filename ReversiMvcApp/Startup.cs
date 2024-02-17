@@ -54,7 +54,12 @@ namespace ReversiMvcApp
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+            
+            app.UseSecurityHeaders(options =>
+            {
+                options.AddDefaultSecurityHeaders();
+            });
+            
             app.UseRouting();
 
             app.UseAuthentication();

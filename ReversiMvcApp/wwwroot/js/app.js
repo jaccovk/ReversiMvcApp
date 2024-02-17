@@ -33,12 +33,13 @@ const Game = (function () {
 })('/api/game');
 Game.Data = (function(){
     let stateMap = {
-        environment : 'development',
-        isProduction : environment === 'production',
+        // environment : 'production',
+        environment: 'development',
         gameState : 0
     }
     const configMap = {
-        apiUrl: isProduction ? "/api/spel/" : "http://localhost:5001/api/spel/",
+        isProduction : stateMap.environment === 'production',
+        apiUrl: stateMap.isProduction ? "/api/spel/" : "http://localhost:5001/api/spel/",
         /*        mock: [
             {
                 url: `api/Spel/Beurt`,
